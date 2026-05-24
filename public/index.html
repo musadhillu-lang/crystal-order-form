@@ -42,12 +42,11 @@ body{
 
 .container{max-width:720px;margin:0 auto}
 
-.head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
-.head-text .title{font-size:1.25rem;font-weight:700;color:var(--text);letter-spacing:-.01em}
-.head-text .sub{font-size:.72rem;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;font-weight:600}
-.crystal-mark{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--green),var(--green-bright));
-  display:flex;align-items:center;justify-content:center;font-weight:900;color:#0a1226;font-size:1.2rem;letter-spacing:-.05em;
-  box-shadow:0 6px 20px rgba(168,210,40,0.3)}
+.head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:24px;flex-wrap:wrap}
+.head-text .title{font-size:1.05rem;font-weight:600;color:var(--green);letter-spacing:.1em;text-transform:uppercase}
+.logo{height:54px;max-width:280px;object-fit:contain;flex-shrink:0;
+  background:#fff;padding:8px 16px;border-radius:10px;
+  box-shadow:0 4px 18px rgba(0,0,0,0.3)}
 
 .card{background:var(--panel);backdrop-filter:blur(20px) saturate(140%);
   -webkit-backdrop-filter:blur(20px) saturate(140%);
@@ -149,7 +148,7 @@ input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(168
 @media (max-width:600px){
   body{padding:16px 12px 32px}
   .head{margin-bottom:18px}
-  .crystal-mark{width:38px;height:38px;font-size:1.05rem}
+  .logo{height:38px}
   .head-text .title{font-size:1.05rem}
   .card{padding:18px 16px}
   .item{grid-template-columns:54px 1fr 72px;gap:10px;padding:12px 0}
@@ -167,10 +166,9 @@ input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(168
 <div class="container">
 
   <div class="head">
-    <div class="crystal-mark">CF</div>
+    <img src="logo.png" alt="Crystal Facilities Management Services" class="logo"/>
     <div class="head-text">
       <div class="title">Hygiene Order Form</div>
-      <div class="sub">Crystal Facilities Management</div>
     </div>
   </div>
 
@@ -314,7 +312,7 @@ function renderForm() {
     for (const [code, name, pack] of section.items) {
       html += `
         <div class="item">
-          <div class="item-img"><img src="/img/${code}.png" alt="${name}" loading="lazy" onerror="this.style.display='none'"/></div>
+          <div class="item-img"><img src="img/${code}.png" alt="${name}" loading="lazy" onerror="this.style.display='none'"/></div>
           <div class="item-info">
             <div class="item-name">${name}</div>
             <div class="item-code">${code}</div>
@@ -432,7 +430,7 @@ function showReview(encoded) {
         const item = ITEM_LOOKUP[c] || { name: c, pack: '' };
         return `
           <div class="review-item">
-            <div class="item-img"><img src="/img/${c}.png" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.style.display='none'"/></div>
+            <div class="item-img"><img src="img/${c}.png" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.style.display='none'"/></div>
             <div class="item-info">
               <div class="item-name">${escapeHtml(item.name)}</div>
               <div class="item-code">${c}</div>
