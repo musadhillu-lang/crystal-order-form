@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Crystal FM — Hygiene Order Form</title>
+<meta name="theme-color" content="#070b1a"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg-deep:#070b1a;
+  --bg:#0c1224;
+  --panel:rgba(20,30,60,0.55);
+  --panel-2:rgba(28,42,80,0.55);
+  --border:rgba(110,140,200,0.12);
+  --border-bright:rgba(168,210,40,0.22);
+  --border-blue:rgba(74,143,216,0.25);
+  --text:#e6edf8;
+  --text-dim:#94a5c4;
+  --text-faint:#5d7195;
+  --green:#a8d228;
+  --green-bright:#c4f02f;
+  --green-glow:rgba(168,210,40,0.45);
+  --blue:#4a8fd8;
+  --red:#e53935;
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI','Helvetica Neue',Arial,sans-serif;
+  color:var(--text);line-height:1.5;min-height:100vh;
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(74,143,216,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(168,210,40,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, var(--bg) 0%, var(--bg-deep) 70%);
+  background-attachment:fixed;
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);
+  padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);
+  -webkit-font-smoothing:antialiased;letter-spacing:-0.005em;
+  padding:24px 16px 48px;
+}
+
+.container{max-width:720px;margin:0 auto}
+
+.head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.head-text .title{font-size:1.25rem;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.head-text .sub{font-size:.72rem;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;font-weight:600}
+.crystal-mark{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--green),var(--green-bright));
+  display:flex;align-items:center;justify-content:center;font-weight:900;color:#0a1226;font-size:1.2rem;letter-spacing:-.05em;
+  box-shadow:0 6px 20px rgba(168,210,40,0.3)}
+
+.card{background:var(--panel);backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  border:1px solid var(--border);border-radius:14px;padding:22px 22px;margin-bottom:14px;
+  box-shadow:0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 24px rgba(0,0,0,0.25)}
+
+.intro{color:var(--text-dim);font-size:.92rem}
+.intro strong{color:var(--green)}
+
+.section-head{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--green);font-weight:700;margin:22px 0 14px;display:flex;align-items:center;gap:12px}
+.section-head:first-child{margin-top:0}
+.section-head::before{content:'';width:4px;height:14px;background:var(--green);
+  box-shadow:0 0 8px var(--green-glow);border-radius:2px}
+.section-head::after{content:'';flex:1;height:1px;
+  background:linear-gradient(90deg, var(--border-bright), transparent)}
+
+label{display:block;font-size:.72rem;color:var(--text-dim);letter-spacing:.06em;
+  text-transform:uppercase;margin-bottom:6px;font-weight:600}
+label .req{color:var(--green);margin-left:3px}
+
+input[type=text],input[type=date],input[type=number]{
+  width:100%;padding:13px 14px;font-size:1rem;border:1px solid var(--border-blue);
+  border-radius:8px;font-family:inherit;color:var(--text);background:rgba(7,11,26,0.5);
+  transition:all .15s}
+input::placeholder{color:var(--text-faint)}
+input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(168,210,40,0.12)}
+
+.head-fields{display:flex;flex-direction:column;gap:12px}
+
+/* ─── PRODUCT ROW WITH IMAGE ─── */
+.item{display:grid;grid-template-columns:64px 1fr 90px;gap:14px;align-items:center;
+  padding:14px 0;border-bottom:1px solid var(--border)}
+.item:last-child{border-bottom:none}
+.item-img{width:64px;height:64px;border-radius:8px;background:#fff;padding:4px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  border:1px solid var(--border)}
+.item-img img{max-width:100%;max-height:100%;object-fit:contain}
+.item-info{min-width:0}
+.item-name{font-size:.92rem;color:var(--text);font-weight:500;line-height:1.35}
+.item-code{font-size:.66rem;color:var(--text-faint);margin-top:3px;font-family:'SF Mono',monospace;letter-spacing:.05em}
+.item-pack{font-size:.72rem;color:var(--blue);margin-top:3px}
+.item input{padding:11px 8px;text-align:center;font-weight:700;font-size:1.05rem}
+
+.action-bar{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.btn-primary{
+  width:100%;padding:18px;
+  background:linear-gradient(135deg, var(--green) 0%, var(--green-bright) 100%);
+  color:#0a1226;border:none;border-radius:12px;font-size:1.05rem;font-weight:700;letter-spacing:.02em;
+  cursor:pointer;transition:all .2s;font-family:inherit;
+  box-shadow:0 8px 24px rgba(168,210,40,0.25), inset 0 1px 0 rgba(255,255,255,0.2)}
+.btn-primary:hover{transform:translateY(-1px);
+  box-shadow:0 12px 32px rgba(168,210,40,0.4), inset 0 1px 0 rgba(255,255,255,0.2)}
+
+.help-text{font-size:.8rem;color:var(--text-dim);text-align:center;margin-top:6px;line-height:1.5}
+
+.status{padding:14px 16px;border-radius:10px;font-size:.9rem;margin-bottom:14px;display:none}
+.status.error{background:rgba(229,57,53,0.12);border:1px solid rgba(229,57,53,0.3);color:#ff7a75;display:block}
+
+/* ─── SUCCESS VIEW ─── */
+.success-view{display:none}
+.success-view.show{display:block}
+.success-view .check{font-size:3rem;text-align:center;margin-bottom:12px}
+.success-view h2{font-size:1.3rem;text-align:center;color:var(--green-bright);margin-bottom:8px;font-weight:700}
+.success-view p{color:var(--text-dim);text-align:center;font-size:.92rem;margin-bottom:18px;line-height:1.55}
+.link-box{background:rgba(7,11,26,0.7);border:1px solid var(--border-bright);
+  border-radius:10px;padding:14px;margin-bottom:14px;
+  font-family:'SF Mono',monospace;font-size:.78rem;color:var(--green-bright);
+  word-break:break-all;line-height:1.45;user-select:all}
+.copy-btn{width:100%;padding:14px;background:transparent;color:var(--green);
+  border:1px solid var(--border-bright);border-radius:10px;font-size:.95rem;font-weight:600;
+  cursor:pointer;transition:all .15s;font-family:inherit;margin-bottom:10px}
+.copy-btn:hover{background:rgba(168,210,40,0.08)}
+.copy-btn.copied{background:var(--green);color:#0a1226;border-color:var(--green)}
+.whatsapp-btn{width:100%;padding:16px;background:#25D366;color:#fff;
+  border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;
+  transition:opacity .15s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+.whatsapp-btn:hover{opacity:.9}
+
+/* ─── REVIEW VIEW ─── */
+.review-banner{background:rgba(168,210,40,0.1);border:1px solid var(--border-bright);
+  border-radius:10px;padding:12px 16px;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--green)}
+.review-banner::before{content:'📋';font-size:1.2rem}
+.review-info{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.92rem}
+.review-info .label{color:var(--text-dim);font-weight:500}
+.review-info .value{color:var(--text);font-weight:600}
+.review-totals{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
+  font-size:.84rem;color:var(--text-dim);display:flex;justify-content:space-between;align-items:center}
+.review-totals strong{color:var(--green);font-size:1.05rem;font-weight:700}
+.review-item{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border)}
+.review-item:last-child{border-bottom:none}
+.review-item .item-img{width:56px;height:56px}
+.review-qty{font-size:1.1rem;font-weight:700;color:var(--green);
+  background:rgba(168,210,40,0.12);border:1px solid var(--border-bright);
+  border-radius:6px;padding:5px 14px;min-width:54px;text-align:center}
+
+@media (max-width:600px){
+  body{padding:16px 12px 32px}
+  .head{margin-bottom:18px}
+  .crystal-mark{width:38px;height:38px;font-size:1.05rem}
+  .head-text .title{font-size:1.05rem}
+  .card{padding:18px 16px}
+  .item{grid-template-columns:54px 1fr 72px;gap:10px;padding:12px 0}
+  .item-img{width:54px;height:54px}
+  .item-name{font-size:.85rem}
+  .item input{padding:10px 4px;font-size:1rem}
+  .review-item{grid-template-columns:48px 1fr auto;gap:10px}
+  .review-item .item-img{width:48px;height:48px}
+  .link-box{font-size:.7rem;padding:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="head">
+    <div class="crystal-mark">CF</div>
+    <div class="head-text">
+      <div class="title">Hygiene Order Form</div>
+      <div class="sub">Crystal Facilities Management</div>
+    </div>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <!-- FILL-IN FORM -->
+  <form id="orderForm">
+
+    <div class="card">
+      <p class="intro">Type a quantity for each item you need. <strong>Leave blank to skip.</strong></p>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Your details</div>
+      <div class="head-fields">
+        <div>
+          <label>Site / Contract<span class="req">*</span></label>
+          <input type="text" name="site" required placeholder="e.g. Heron Tower"/>
+        </div>
+        <div>
+          <label>Your name<span class="req">*</span></label>
+          <input type="text" name="name" required placeholder="Full name"/>
+        </div>
+        <div>
+          <label>Date<span class="req">*</span></label>
+          <input type="date" name="date" required/>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="items-card"></div>
+
+    <div class="action-bar">
+      <button type="submit" class="btn-primary" id="submitBtn">Generate Order Link</button>
+      <div class="help-text">You'll get a link to copy and send back on WhatsApp.</div>
+    </div>
+
+  </form>
+
+  <!-- SUCCESS VIEW -->
+  <div class="success-view" id="successView">
+    <div class="card">
+      <div class="check">✅</div>
+      <h2>Order ready</h2>
+      <p>Copy the link below and send it back on WhatsApp to whoever asked you to fill this in.</p>
+      <div class="link-box" id="shareLink"></div>
+      <button class="copy-btn" id="copyBtn">Copy link</button>
+      <button class="whatsapp-btn" id="whatsappBtn">Send via WhatsApp</button>
+      <p class="help-text" style="margin-top:14px">Whoever opens this link will see your filled-in order.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SECTIONS = [
+  { name: 'Cleaning chemicals', items: [
+    ['OL111',       'Clover Impact Citrus Floor Gel', '5L'],
+    ['EVA042EEV2',  'Evans Mystrol Concentrated', '5L'],
+    ['EVA037AEV',   'Evans Mystrol RTU', '750ml'],
+    ['EVA010AEV',   'Evans Clean Fast Washroom Cleaner', '5L'],
+    ['EVA010EEV2',  'Evans Clean Fast Washroom Cleaner', '750ml'],
+    ['OL301',       'Clover Ubik 2000 Cleaner & Degreaser', '5L'],
+    ['RSUBIKBOT',   'Trigger Spray Bottle (Ubik 2000)', '1'],
+    ['OLI09',       'I09 Premium Washing Up Liquid', '5L'],
+    ['OL364T',      'Pro-roc Rapid Oven Cleaner Spray', '6 pack'],
+  ]},
+  { name: 'Toilet & descaler', items: [
+    ['SRH05A',      'Act Toilet Cleaner Sulphamic', '1L · 12 pack'],
+    ['OL502A',      'Clover Acid Wash 80 Descaler', '1L · 12 pack'],
+    ['EVA004AEV',   'Evans Cyclone Spray', '750ml · 12 pack'],
+  ]},
+  { name: 'Mops & handles', items: [
+    ['RS103132B',   'Aluminium Screw Fit Handle 125cm — Blue', '1'],
+    ['RAPXS12JB',   'Socket Mop Head 12oz — Blue', '5 pack'],
+    ['RS103132R',   'Aluminium Screw Fit Handle 125cm — Red', '1'],
+    ['RAPXS12JR',   'Socket Mop Head 12oz — Red', '5 pack'],
+    ['OLDIS77',     'Clover Bottle Pump', '30ml'],
+  ]},
+  { name: 'Gloves', items: [
+    ['RARGYS',      'Proguard Rubber Gloves — Small (Yellow)', 'Pair'],
+    ['RARGYM',      'Proguard Rubber Gloves — Medium (Yellow)', 'Pair'],
+    ['RARGYL',      'Proguard Rubber Gloves — Large (Yellow)', 'Pair'],
+  ]},
+  { name: 'Cloths & scourers', items: [
+    ['HWMIC07B',    'Microfibre Cloth — Blue', '5 pack'],
+    ['HWMIC07R',    'Microfibre Cloth — Pink', '5 pack'],
+    ['HWMIC07G',    'Microfibre Cloth — Green', '5 pack'],
+    ['RS105002',    'Small Heavy Duty Green Scourer', '10 pack'],
+    ['RA803CT',     'Foam Backed Sponge Scourer', '10 pack'],
+    ['RA82440',     'Stainless Steel Ball Scourer 40g', '10 pack'],
+  ]},
+  { name: 'Misc tools', items: [
+    ['RA606',       'Telescopic Flick Duster', '1'],
+    ['HILB1240B',   '180mm Stainless Wire Niche Brush', '1'],
+    ['SA198',       'Refuse Sack Heavy Duty 15kg', '200 pack'],
+  ]},
+  { name: 'Equipment', items: [
+    ['NNRV240',     'Numatic Rewind Vacuum Cleaner 230V — Red', '1'],
+    ['VACBAG01',    'Paper Vacuum Bags — Numatic Henry', '10 pack'],
+    ['RA356210',    "Dual Warning 'A' Frame Sign — Yellow", '1'],
+    ['SYRL1405291', 'Socket Mop Bucket 12L — Red', '1'],
+    ['SYRL1405292', 'Socket Mop Bucket 12L — Blue', '1'],
+    ['RS102834R',   '8L Round Bucket — Red', '1'],
+    ['RS102834B',   '8L Round Bucket — Blue', '1'],
+  ]},
+];
+
+const ITEM_LOOKUP = {};
+for (const section of SECTIONS) {
+  for (const [code, name, pack] of section.items) {
+    ITEM_LOOKUP[code] = { name, pack };
+  }
+}
+
+// Base64-url encode/decode (handles unicode in name/site)
+function encodeOrder(order) {
+  const json = JSON.stringify(order);
+  return btoa(unescape(encodeURIComponent(json)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function decodeOrder(str) {
+  try {
+    const padded = str.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(decodeURIComponent(escape(atob(padded))));
+  } catch { return null; }
+}
+
+const hash = window.location.hash;
+if (hash.startsWith('#o=')) {
+  showReview(hash.slice(3));
+} else {
+  renderForm();
+}
+
+function renderForm() {
+  const itemsCard = document.getElementById('items-card');
+  let html = '';
+  for (const section of SECTIONS) {
+    html += `<div class="section-head">${section.name}</div>`;
+    for (const [code, name, pack] of section.items) {
+      html += `
+        <div class="item">
+          <div class="item-img"><img src="/img/${code}.png" alt="${name}" loading="lazy" onerror="this.style.display='none'"/></div>
+          <div class="item-info">
+            <div class="item-name">${name}</div>
+            <div class="item-code">${code}</div>
+            <div class="item-pack">${pack}</div>
+          </div>
+          <input type="number" name="qty_${code}" min="0" step="1" placeholder="0" inputmode="numeric"/>
+        </div>`;
+    }
+  }
+  itemsCard.innerHTML = html;
+
+  document.querySelector('input[name=date]').valueAsDate = new Date();
+
+  const form = document.getElementById('orderForm');
+  const status = document.getElementById('status');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    status.className = 'status';
+    status.textContent = '';
+
+    const formData = new FormData(form);
+    const items = [];
+    for (const section of SECTIONS) {
+      for (const [code] of section.items) {
+        const qty = formData.get('qty_' + code);
+        if (qty && parseInt(qty, 10) > 0) {
+          items.push({ c: code, q: parseInt(qty, 10) });
+        }
+      }
+    }
+
+    if (items.length === 0) {
+      status.className = 'status error';
+      status.textContent = 'Please enter a quantity for at least one item.';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const order = {
+      s: formData.get('site'),
+      n: formData.get('name'),
+      d: formData.get('date'),
+      i: items,
+    };
+
+    const encoded = encodeOrder(order);
+    const shareUrl = window.location.origin + '/#o=' + encoded;
+
+    form.style.display = 'none';
+    document.getElementById('successView').classList.add('show');
+    document.getElementById('shareLink').textContent = shareUrl;
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('copyBtn');
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        btn.textContent = '✓ Copied — now paste into WhatsApp';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy link';
+          btn.classList.remove('copied');
+        }, 3000);
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(document.getElementById('shareLink'));
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        btn.textContent = 'Link selected — press Cmd+C / Ctrl+C';
+      }
+    });
+
+    document.getElementById('whatsappBtn').addEventListener('click', () => {
+      const msg = `Crystal hygiene order — ${order.s}, ${order.n}, ${items.length} items.\n\nOpen: ${shareUrl}`;
+      window.location.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+function showReview(encoded) {
+  const order = decodeOrder(encoded);
+  if (!order || !Array.isArray(order.i)) {
+    const s = document.getElementById('status');
+    s.className = 'status error';
+    s.textContent = 'Could not read this order — the link may be broken. Ask the sender to resubmit.';
+    document.getElementById('orderForm').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('orderForm').style.display = 'none';
+
+  const container = document.querySelector('.container');
+  const reviewHtml = `
+    <div class="review-banner">Order received — review the items below.</div>
+
+    <div class="card">
+      <div class="section-head">Order details</div>
+      <div class="review-info">
+        <div class="label">Site:</div><div class="value">${escapeHtml(order.s || '—')}</div>
+        <div class="label">Name:</div><div class="value">${escapeHtml(order.n || '—')}</div>
+        <div class="label">Date:</div><div class="value">${formatDate(order.d)}</div>
+      </div>
+      <div class="review-totals">
+        <span>Total items requested</span>
+        <strong>${order.i.length}</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Items requested</div>
+      ${order.i.map(({c, q}) => {
+        const item = ITEM_LOOKUP[c] || { name: c, pack: '' };
+        return `
+          <div class="review-item">
+            <div class="item-img"><img src="/img/${c}.png" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.style.display='none'"/></div>
+            <div class="item-info">
+              <div class="item-name">${escapeHtml(item.name)}</div>
+              <div class="item-code">${c}</div>
+              <div class="item-pack">${escapeHtml(item.pack)}</div>
+            </div>
+            <div class="review-qty">${q}</div>
+          </div>`;
+      }).join('')}
+    </div>
+
+    <div class="action-bar">
+      <a class="btn-primary" href="/" style="text-decoration:none;display:inline-block;text-align:center">Place a new order</a>
+    </div>
+  `;
+  container.insertAdjacentHTML('beforeend', reviewHtml);
+}
+
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function formatDate(iso) {
+  if (!iso) return '—';
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+  } catch { return iso; }
+}
+</script>
+
+</body>
+</html>
