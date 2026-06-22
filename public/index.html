@@ -89,6 +89,7 @@ input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(168
 .item-name{font-size:.92rem;color:var(--text);font-weight:500;line-height:1.35}
 .item-code{font-size:.66rem;color:var(--text-faint);margin-top:3px;font-family:'SF Mono',monospace;letter-spacing:.05em}
 .item-pack{font-size:.72rem;color:var(--blue);margin-top:3px}
+.order-total{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;margin-top:8px;border-top:1px solid var(--border);font-size:1rem;font-weight:700;color:var(--green)}
 .item input{padding:11px 8px;text-align:center;font-weight:700;font-size:1.05rem}
 
 .action-bar{margin-top:18px;display:flex;flex-direction:column;gap:10px}
@@ -178,7 +179,7 @@ input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(168
   <form id="orderForm">
 
     <div class="card">
-      <p class="intro">Type a quantity for each item you need. <strong>Leave blank to skip.</strong></p>
+      <p class="intro">Enter how many <strong>packs</strong> you need of each item (the pack size &amp; price per pack are shown). <strong>Leave blank to skip.</strong> The total updates as you go.</p>
     </div>
 
     <div class="card">
@@ -224,66 +225,62 @@ input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(168
 </div>
 
 <script>
+// [code, name, pack size, price per pack] — exact from the Hygiene Systems list.
+// Quantity entered = number of PACKS/boxes.
 const SECTIONS = [
-  { name: 'Cleaning chemicals', items: [
-    ['OL111',       'Clover Impact Citrus Floor Gel', '5L'],
-    ['EVA042EEV2',  'Evans Mystrol Concentrated', '5L'],
-    ['EVA037AEV',   'Evans Mystrol RTU', '750ml'],
-    ['EVA010AEV',   'Evans Clean Fast Washroom Cleaner', '5L'],
-    ['EVA010EEV2',  'Evans Clean Fast Washroom Cleaner', '750ml'],
-    ['BB002-5',     'Jangro Kitchen Degreaser — Heavy Duty', '5L'],
-    ['BB002-75',    'Jangro Kitchen Degreaser — Heavy Duty (Spray)', '750ml'],
-    ['RSUBIKBOT',   'Trigger Spray Bottle (Ubik 2000)', '1'],
-    ['OLI09',       'I09 Premium Washing Up Liquid', '5L'],
-    ['OL364T',      'Pro-roc Rapid Oven Cleaner Spray', '6 pack'],
-  ]},
-  { name: 'Toilet & descaler', items: [
-    ['SRH05A',      'Act Toilet Cleaner Sulphamic', '1L · 12 pack'],
-    ['OL502A',      'Clover Acid Wash 80 Descaler', '1L · 12 pack'],
-    ['EVA004AEV',   'Evans Cyclone Spray', '750ml · 12 pack'],
-  ]},
-  { name: 'Mops & handles', items: [
-    ['RS103132B',   'Aluminium Screw Fit Handle 125cm — Blue', '1'],
-    ['RAPXS12JB',   'Socket Mop Head 12oz — Blue', '5 pack'],
-    ['RS103132R',   'Aluminium Screw Fit Handle 125cm — Red', '1'],
-    ['RAPXS12JR',   'Socket Mop Head 12oz — Red', '5 pack'],
-    ['OLDIS77',     'Clover Bottle Pump', '30ml'],
-  ]},
-  { name: 'Gloves', items: [
-    ['RARGYS',      'Proguard Rubber Gloves — Small (Yellow)', 'Pair'],
-    ['RARGYM',      'Proguard Rubber Gloves — Medium (Yellow)', 'Pair'],
-    ['RARGYL',      'Proguard Rubber Gloves — Large (Yellow)', 'Pair'],
-  ]},
-  { name: 'Cloths & scourers', items: [
-    ['HWMIC07B',    'Microfibre Cloth — Blue', '5 pack'],
-    ['HWMIC07R',    'Microfibre Cloth — Pink', '5 pack'],
-    ['HWMIC07G',    'Microfibre Cloth — Green', '5 pack'],
-    ['RS105002',    'Small Heavy Duty Green Scourer', '10 pack'],
-    ['RA803CT',     'Foam Backed Sponge Scourer', '10 pack'],
-    ['RA82440',     'Stainless Steel Ball Scourer 40g', '10 pack'],
-  ]},
-  { name: 'Misc tools', items: [
-    ['RA606',       'Telescopic Flick Duster', '1'],
-    ['HILB1240B',   '180mm Stainless Wire Niche Brush', '1'],
-    ['SA198',       'Refuse Sack Heavy Duty 15kg', '200 pack'],
-  ]},
-  { name: 'Equipment', items: [
-    ['NNRV240',     'Numatic Rewind Vacuum Cleaner 230V — Red', '1'],
-    ['VACBAG01',    'Paper Vacuum Bags — Numatic Henry', '10 pack'],
-    ['RA356210',    "Dual Warning 'A' Frame Sign — Yellow", '1'],
-    ['SYRL1405291', 'Socket Mop Bucket 12L — Red', '1'],
-    ['SYRL1405292', 'Socket Mop Bucket 12L — Blue', '1'],
-    ['RS102834R',   '8L Round Bucket — Red', '1'],
-    ['RS102834B',   '8L Round Bucket — Blue', '1'],
+  { name: 'Products', items: [
+    ['RSUBIKBOT',  'Trigger Spray Bottle Complete 750ml - C/w Ubik 2000 Label', '1', 1.40],
+    ['RS102846',   'Domed Toilet Brush Head - White', '1', 0.80],
+    ['EVBB00275',  'Cfm Kitchen Degreaser Heavy Duty 750ml', '6', 13.28],
+    ['EVBB0025',   'Cfm Kitchen Degreaser Heavy Duty 5ltr', '1', 9.99],
+    ['RA356210',   "Dual Warning 'a' Frame Sign - Yellow", '1', 4.97],
+    ['NNRV240',    'Numatic Rewind Vacuum Cleaner 230 Volt - Red', '1', 133.95],
+    ['RS102834R',  '8ltr Round Bucket Plastic - Red', '1 x 8ltr', 2.20],
+    ['RS102834B',  '8ltr Round Bucket Plastic - Blue', '1 x 8ltr', 2.20],
+    ['HILB1240B',  '180mm S/steel Wire Niche Brush - Black', '1', 0.75],
+    ['RA606',      'Telesopic Flick Duster - Extends Up To 118 Cm', '1', 1.42],
+    ['RS103132B',  'Hygiene Aluminium Screw Fit Handle 125cm - Blue', '1', 3.02],
+    ['RS103132R',  'Hygiene Aluminium Screw Fit Handle 125cm - Red', '1', 3.02],
+    ['RA5060R',    'Standard Socket Mop Bucket Plastic 15ltr - Red', '1', 4.74],
+    ['RA5060B',    'Standard Socket Mop Bucket Plastic 15ltr - Blue', '1', 4.74],
+    ['RAPXS12JB',  'Socket Mop Head 12oz Pure Yarn - Blue', '5', 4.46],
+    ['RAPXS12JR',  'Socket Mop Head 12oz Pure Yarn - Red', '5', 4.46],
+    ['OLDIS77',    'Clover Bottle Pump To Fit 5ltr Bottle - 30 Ml', '1 x 30ml', 3.00],
+    ['RARGYS',     'Proguard Rubber Gloves - Yellow (sml)', 'Pair', 0.46],
+    ['RARGYM',     'Proguard Rubber Gloves - Yellow (med)', 'Pair', 0.46],
+    ['RARGYL',     'Proguard Rubber Gloves - Yellow (lrg)', 'Pair', 0.46],
+    ['SA198',      'Refuse Sack Heavy Duty - 15kg', '1 x 200', 11.25],
+    ['VACBAG01',   'Paper Vacuum Bags To Fit Numatic Henry (sdb48)', '10', 3.20],
+    ['HWMIC07B',   'Microfibre Standard Cloth - Blue', '5', 1.39],
+    ['HWMIC07R',   'Microfibre Standard Cloth - Pink', '5', 1.39],
+    ['HWMIC07G',   'Microfibre Standard Cloth - Green', '5', 1.39],
+    ['RS105002',   'Small Heavy Duty Green Scourer 11x15cm', '1 x 10', 1.85],
+    ['RA803CT',    'Foam Backed Sponge Scourer 13 X 8cm', '1 x 10', 1.77],
+    ['RA82440',    'Stainless Steel Ball Scourer 40grm', '10', 2.99],
+    ['KPC2B156E',  'Blue Centrefeed Roll 2ply', '6', 13.84],
+    ['EVA042EEV2', 'Evans Mystrol Concentrated Multi Purpose Cleaner 5ltr', '2', 22.10],
+    ['EVA004AEV',  'Evans Cyclone Spray 750ml', '12 x 750ml', 34.12],
+    ['OL701',      'Clover Brite Glass Cleaner - Fragrance Free (5ltr)', '1 x 5ltr', 7.27],
+    ['OL701T',     'Clover Brite Glass Cleaner - Fragrance Free (750ml)', '6 x 750ml', 12.24],
+    ['EVA037AEV',  'Evans Mystrol Multi Purpose Cleaner Rtu 750ml', '6', 14.30],
+    ['OL111',      'Clover Impact Citrus Floor Gel - Lemon Fragrance', '1 x 5ltr', 7.02],
+    ['EVA010AEV',  'Evans Clean Fast Washroom Cleaner 5ltr', '2', 15.40],
+    ['SRH05A',     'Act Toilet Cleaner Sulphamic - (1ltr)', '12 x 1ltr', 23.55],
+    ['EVA010EEV2', 'Evans Clean Fast Washroom Cleaner 750ml', '6', 18.70],
+    ['OL502A',     'Clover Acid Wash 80 Extra Strength Acidic Cleaner Descaler - Fragrance Free', '12 x 1ltr', 30.90],
+    ['OL301',      'Clover Ubik 2000 Cleaner & Degreaser - Fragrance Free', '1 x 5ltr', 9.43],
+    ['OLI09',      'I09 Premium Washing Up Liquid', '1', 5.88],
+    ['OL364T',     'Pro-roc Rapid Oven Cleaner', '6', 20.64],
   ]},
 ];
 
 const ITEM_LOOKUP = {};
 for (const section of SECTIONS) {
-  for (const [code, name, pack] of section.items) {
-    ITEM_LOOKUP[code] = { name, pack };
+  for (const [code, name, pack, price] of section.items) {
+    ITEM_LOOKUP[code] = { name, pack, price };
   }
 }
+const money = (n) => '£' + (Number(n) || 0).toFixed(2);
 
 // Base64-url encode/decode (handles unicode in name/site)
 function encodeOrder(order) {
@@ -310,20 +307,30 @@ function renderForm() {
   let html = '';
   for (const section of SECTIONS) {
     html += `<div class="section-head">${section.name}</div>`;
-    for (const [code, name, pack] of section.items) {
+    for (const [code, name, pack, price] of section.items) {
       html += `
         <div class="item">
           <div class="item-img"><img src="img/${code}.png" alt="${name}" loading="lazy" onerror="this.style.display='none'"/></div>
           <div class="item-info">
             <div class="item-name">${name}</div>
             <div class="item-code">${code}</div>
-            <div class="item-pack">${pack}</div>
+            <div class="item-pack">Pack: ${pack} &middot; ${money(price)}</div>
           </div>
-          <input type="number" name="qty_${code}" min="0" step="1" placeholder="0" inputmode="numeric"/>
+          <input type="number" name="qty_${code}" data-price="${price}" min="0" step="1" placeholder="0" inputmode="numeric"/>
         </div>`;
     }
   }
-  itemsCard.innerHTML = html;
+  itemsCard.innerHTML = html +
+    '<div class="order-total" id="orderTotal"><span>Estimated total</span><span id="orderTotalVal">£0.00</span></div>';
+
+  function recalcTotal() {
+    let t = 0;
+    document.querySelectorAll('input[name^="qty_"]').forEach(inp => {
+      t += (parseInt(inp.value, 10) || 0) * (parseFloat(inp.dataset.price) || 0);
+    });
+    document.getElementById('orderTotalVal').textContent = money(t);
+  }
+  document.querySelectorAll('input[name^="qty_"]').forEach(inp => inp.addEventListener('input', recalcTotal));
 
   document.querySelector('input[name=date]').valueAsDate = new Date();
 
@@ -388,7 +395,8 @@ function renderForm() {
     });
 
     document.getElementById('whatsappBtn').addEventListener('click', () => {
-      const msg = `Crystal hygiene order — ${order.s}, ${order.n}, ${items.length} items.\n\nOpen: ${shareUrl}`;
+      const orderTotal = items.reduce((s, {c, q}) => s + q * ((ITEM_LOOKUP[c] || {}).price || 0), 0);
+      const msg = `Crystal hygiene order — ${order.s}, ${order.n}, ${items.length} lines, ${money(orderTotal)}.\n\nOpen: ${shareUrl}`;
       window.location.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
     });
 
@@ -409,6 +417,7 @@ function showReview(encoded) {
   document.getElementById('orderForm').style.display = 'none';
 
   const container = document.querySelector('.container');
+  const grand = order.i.reduce((s, {c, q}) => s + (q || 0) * ((ITEM_LOOKUP[c] || {}).price || 0), 0);
   const reviewHtml = `
     <div class="review-banner">Order received — review the items below.</div>
 
@@ -420,24 +429,25 @@ function showReview(encoded) {
         <div class="label">Date:</div><div class="value">${formatDate(order.d)}</div>
       </div>
       <div class="review-totals">
-        <span>Total items requested</span>
-        <strong>${order.i.length}</strong>
+        <span>${order.i.length} product line${order.i.length !== 1 ? 's' : ''}</span>
+        <strong>Total ${money(grand)}</strong>
       </div>
     </div>
 
     <div class="card">
       <div class="section-head">Items requested</div>
       ${order.i.map(({c, q}) => {
-        const item = ITEM_LOOKUP[c] || { name: c, pack: '' };
+        const item = ITEM_LOOKUP[c] || { name: c, pack: '', price: 0 };
+        const line = (q || 0) * (item.price || 0);
         return `
           <div class="review-item">
             <div class="item-img"><img src="img/${c}.png" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.style.display='none'"/></div>
             <div class="item-info">
               <div class="item-name">${escapeHtml(item.name)}</div>
               <div class="item-code">${c}</div>
-              <div class="item-pack">${escapeHtml(item.pack)}</div>
+              <div class="item-pack">Pack: ${escapeHtml(item.pack)} &middot; ${money(item.price)} each</div>
             </div>
-            <div class="review-qty">${q}</div>
+            <div class="review-qty">${q} &times;<br><strong>${money(line)}</strong></div>
           </div>`;
       }).join('')}
     </div>
